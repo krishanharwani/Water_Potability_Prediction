@@ -16,14 +16,13 @@ import base64
 from pandas import MultiIndex, Int64Index
 
 
-
-
 data = pd.read_csv('https://wqp.herokuapp.com/getCSV/')
-data.columns = ["ph","Turbidity"]
 original_data = data.copy(deep=True)
 data = data.iloc[:,0:]
 # original_data = pd.read_csv('https://wqp.herokuapp.com/getCSV/')
-feature_list = {'ph':0,'Turbidity':0,'pH_Type':0,'Turbidity_Type':0}
+feature_list = {'ph':0,'Turbidity':0}
+
+
 classifier = joblib.load('algorithms.sav')
 rfc=joblib.load('rfclassifier.sav')
 dtc=joblib.load('dtclassifier.sav')
@@ -53,6 +52,54 @@ st.markdown(
 
 st.title('Water Potability Prediction !!!!!!!')
 st.subheader('Predict the water you drink is pure or not ??')
+st.sidebar.header('Predict The Purity')
+for j in feature_list.keys():
+    feature_list[j] = st.sidebar.number_input(f'enter value for {j}')
+
+
+
+
+if st.sidebar.button('Predict_gb'):
+    if 0 in list(feature_list.values()):
+        st.sidebar.markdown(' # Please fill all the values')
+    else:
+        #if st.sidebar.button('RF'):
+        pred = gbc.predict([list(feature_list.values())])
+        if pred[0]==0:
+            st.sidebar.markdown('# water is not so potable for drinking purpose')
+        else:
+            st.sidebar.markdown('# water is potable for drinking purpose')
+          
+if st.sidebar.button('Predict_sv'):
+    if 0 in list(feature_list.values()):
+        st.sidebar.markdown(' # Please fill all the values')
+    else:
+        #if st.sidebar.button('RF'):
+        pred = svc.predict([list(feature_list.values())])
+        if pred[0]==0:
+            st.sidebar.markdown('# water is not so potable for drinking purpose')
+        else:
+            st.sidebar.markdown('# water is potable for drinking purpose')    
+if st.sidebar.button('Predict_rf'):
+    if 0 in list(feature_list.values()):
+        st.sidebar.markdown(' # Please fill all the values')
+    else:
+        #if st.sidebar.button('RF'):
+        pred = rfc.predict([list(feature_list.values())])
+        if pred[0]==0:
+            st.sidebar.markdown('# water is not so potable for drinking purpose')
+        else:
+            st.sidebar.markdown('# water is potable for drinking purpose')
+if st.sidebar.button('Predict_dt'):
+    if 0 in list(feature_list.values()):
+        st.sidebar.markdown(' # Please fill all the values')
+    else:
+        #if st.sidebar.button('RF'):
+        pred = dtc.predict([list(feature_list.values())])
+        if pred[0]==0:
+            st.sidebar.markdown('# water is not so potable for drinking purpose')
+        else:
+            st.sidebar.markdown('# water is potable for drinking purpose')
 
          
 st.image('water.jpg')
@@ -74,8 +121,6 @@ with header:
         col1.header(f'{plot_type} of {feat} feature')
 with body:
     col1, col2 = st.columns(2)
-    col1.header('About Me')
-    col1.markdown('''My name is Yukta Lalwani , I'm pursuing my Computer Science Degree and love to do Machine Learning stuff''')
-    col2.header('About Project')
-    col2.markdown("Are you researching for water potability check, Just fill the content of water and here you go")
 
+
+        
