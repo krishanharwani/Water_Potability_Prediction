@@ -4,36 +4,24 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.svm import SVC
-from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import plotly.express as px
 import joblib
 import base64
-from pandas import MultiIndex, Int64Index
 
 
-data = pd.read_csv('https://wqp.herokuapp.com/getCSV/')
-original_data = data.copy(deep=True)
+data = pd.read_csv('data (12).csv')
 data = data.iloc[:,0:]
-# original_data = pd.read_csv('https://wqp.herokuapp.com/getCSV/')
-feature_list = {'ph':0,'Turbidity':0}
+original_data = pd.read_csv('data (12).csv')
+#feature_list = {'ph':0,'Turbidity':0,'pH_Type':0,'Turbidity_Type':0}
 
 
-classifier = joblib.load('algorithms.sav')
 rfc=joblib.load('rfclassifier.sav')
-dtc=joblib.load('dtclassifier.sav')
-xgbc=joblib.load('xgbclassifier.sav')
-gbc=joblib.load('gbclassifier.sav')
-svc=joblib.load('svc.sav')
-ann=joblib.load('ann.sav')
-main_bg = "nature-3267579_1920.jpg"
+main_bg = "scott-webb-UjupleczBOY-unsplash"
 main_bg_ext = "jpg"
 
-side_bg = "nature-3267579_1920.jpg"
+side_bg = "scott-webb-UjupleczBOY-unsplash"
 side_bg_ext = "jpg"
 
 st.markdown(
@@ -51,59 +39,60 @@ st.markdown(
 )
 
 st.title('Water Potability Prediction !!!!!!!')
-st.subheader('Predict the water you drink is pure or not ??')
+st.subheader('Predict the water you drink is still pure or not ??')
 st.sidebar.header('Predict The Purity')
-for j in feature_list.keys():
-    feature_list[j] = st.sidebar.number_input(f'enter value for {j}')
+#for j in feature_list.keys():
+ #   avg=sum(data/data.value_counts())
+  #  feature_list[j] = st.write(avg)
+#avg0=sum(data['ph'])/len(data['ph'])
+#avg1=sum(data['Turbidity'])/len(data['Turbidity'])
+#avg2=sum(data['pH_Type'])/len(data['pH_Type'])
+#avg3=sum(data['Turbidity_Type'])/len(data['Turbidity_Type'])
+#ph=st.write(avg0)
+#turbidity=st.write(avg1)
+#ph_type=st.write(avg2)
+#turbidity_type=st.write(avg3)
+avg0=data['ph'].mean()
+avg1=data['Turbidity'].mean()
+avg2=max(data['ph'])
+avg3=min(data['ph'])
+#avg2=data['pH_Type'].mean()
+#avg3=data['Turbidity_Type'].mean()
+st.sidebar.write('Average value of pH from the data')
+st.sidebar.write(avg0)
+st.sidebar.write('Average value of Turbidity from the data')
+st.sidebar.write(avg1)
+#st.sidebar.write(avg2)
+#st.sidebar.write(avg3)
 
 
-
-
-if st.sidebar.button('Predict_gb'):
-    if 0 in list(feature_list.values()):
-        st.sidebar.markdown(' # Please fill all the values')
-    else:
-        #if st.sidebar.button('RF'):
-        pred = gbc.predict([list(feature_list.values())])
-        if pred[0]==0:
-            st.sidebar.markdown('# water is not so potable for drinking purpose')
-        else:
-            st.sidebar.markdown('# water is potable for drinking purpose')
-          
-if st.sidebar.button('Predict_sv'):
-    if 0 in list(feature_list.values()):
-        st.sidebar.markdown(' # Please fill all the values')
-    else:
-        #if st.sidebar.button('RF'):
-        pred = svc.predict([list(feature_list.values())])
-        if pred[0]==0:
-            st.sidebar.markdown('# water is not so potable for drinking purpose')
-        else:
-            st.sidebar.markdown('# water is potable for drinking purpose')    
 if st.sidebar.button('Predict_rf'):
-    if 0 in list(feature_list.values()):
-        st.sidebar.markdown(' # Please fill all the values')
-    else:
+   # if 0 in list(feature_list.values()):
+    #    st.sidebar.markdown(' # Please fill all the values')
+    #else:
         #if st.sidebar.button('RF'):
-        pred = rfc.predict([list(feature_list.values())])
-        if pred[0]==0:
-            st.sidebar.markdown('# water is not so potable for drinking purpose')
-        else:
-            st.sidebar.markdown('# water is potable for drinking purpose')
-if st.sidebar.button('Predict_dt'):
-    if 0 in list(feature_list.values()):
-        st.sidebar.markdown(' # Please fill all the values')
+    pred = rfc.predict([[avg0,avg1]])
+    if pred==0:
+        st.sidebar.markdown('# Water is not so potable for further consumption')
     else:
-        #if st.sidebar.button('RF'):
-        pred = dtc.predict([list(feature_list.values())])
-        if pred[0]==0:
-            st.sidebar.markdown('# water is not so potable for drinking purpose')
-        else:
-            st.sidebar.markdown('# water is potable for drinking purpose')
+        st.sidebar.markdown('# Water is potable for further consumption')
 
-         
+    if avg0>7:
+        st.sidebar.write('Water is still basic')
+    elif avg0<7:
+        st.sidebar.write('Water is still acidic')
+    elif avg0==7:
+        st.sidebar.write('Water is still neutral')
+ 
+    if avg1>5:
+        st.sidebar.write('Turbidity is above range')
+    elif avg1<5:
+        st.sidebar.write('Turbidity is medium')
+    elif avg1==7 and avg1>1:
+        st.sidebar.write('Water is still good for drinking')
+
 st.image('water.jpg')
-st.dataframe(data.head(200))
+st.dataframe(data)
 header = st.container()
 body = st.container()
 with header:
@@ -121,6 +110,11 @@ with header:
         col1.header(f'{plot_type} of {feat} feature')
 with body:
     col1, col2 = st.columns(2)
-
+    col1.header('About Us')
+    #col1.markdown("My name is Yukta Lalwani , I'm pursuing my Computer Science Degree and love to do Machine Learning stuff")
+    col1.markdown("This project is made by Khushi Shahu, Kiran Assudani, Krishan Harwani and Yukta Lalwani")
+   # col2.header('About Project')
+   # col2.markdown("Are you researching for water potability check, Just predict the content of water and here you go")
+    
 
         
