@@ -24,17 +24,6 @@ main_bg_ext = "jpg"
 side_bg = "scott-webb-UjupleczBOY-unsplash"
 side_bg_ext = "jpg"
 
-st.markdown(
-    f"""
-    <style>
-
-   .sidebar .sidebar-content {{
-        background: url(data:image/{side_bg_ext};base64,{base64.b64encode(open(side_bg, "rb").read()).decode()})
-    }}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
 
 st.title('Water Potability Prediction !!!!!!!')
 st.subheader('Predict the water you drink is still pure or not ??')
